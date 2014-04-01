@@ -11,7 +11,7 @@ public class LoadBalancer {
 	
     public static void main(String[] args) throws IOException {
 
-	    if (args.length != 1) {
+	    if (args.length != 2) {
 	        System.err.println("Usage: java LoadBalancer <client port> <slave port>");
 	        System.exit(1);
 	    }
@@ -19,17 +19,18 @@ public class LoadBalancer {
 	    BlockingQueue<SlaveInfo> slaveQueue = new ArrayBlockingQueue<SlaveInfo>(MAX_SLAVES);
     	
 	    int slavePort = Integer.parseInt(args[1]);
+        System.out.println("Waiting for Slaves...");
 	    new SlaveListener(slavePort, slaveQueue).start();
 	    
         int clientPort = Integer.parseInt(args[0]);
         boolean listening = true;
-
+        System.out.println("Waiting for Clients...");
         try (ServerSocket serverSocket = new ServerSocket(clientPort)) {
             while (listening) {
-                System.out.println("New Client Connection");
                 SlaveInfo nextSlave = slaveQueue.poll();
                 
                 Socket socket = serverSocket.accept();
+                System.out.println("New Client Connection");
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                 oos.writeObject(nextSlave);
                 oos.flush();

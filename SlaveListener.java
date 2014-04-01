@@ -20,9 +20,8 @@ public class SlaveListener extends Thread {
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (listening) {
-                System.out.println("New Slave Connection");
-                
                 Socket socket = serverSocket.accept();
+                System.out.println("New Slave Connection");
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 SlaveInfo newSlave = (SlaveInfo)ois.readObject();
                 socket.close();

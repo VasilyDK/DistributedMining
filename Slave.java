@@ -7,21 +7,20 @@ import java.net.UnknownHostException;
 public class Slave {
     public static void main(String[] args) throws IOException {
 
-	    if (args.length != 4) {
-	        System.err.println("Usage: java KKMultiServer <LB host> <LB port> <client host> <client port>");
+	    if (args.length != 3) {
+	        System.err.println("Usage: java slave <LB host> <LB port> <client port>");
 	        System.exit(1);
 	    }
 	    
 	    String LBhost = args[0];
         int LBport = Integer.parseInt(args[1]);
-        String clientHost = args[2];
-        int clientPort = Integer.parseInt(args[3]);
+        int clientPort = Integer.parseInt(args[2]);
 
 	    try {        
             Socket socket = new Socket(LBhost, LBport);
             System.out.println("Connection Established");
             
-            SlaveInfo sInfo = new SlaveInfo(clientHost, clientPort);
+            SlaveInfo sInfo = new SlaveInfo(socket.getLocalAddress().getHostName(), clientPort);
             
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(sInfo);
